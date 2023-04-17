@@ -1,0 +1,10 @@
+<html>
+    <Body>
+        <h1>cars</h1>
+        <ul>
+          <% items.forEach(item => { %>
+            <li><a href="/detail?manufacturer=<%= item.manufacturer %>"><%= item.manufacturer %> - <%= item.model %> - <%= item.horsepower %></a></li>
+          <% }) %>
+        </ul>
+      </body>
+</html>

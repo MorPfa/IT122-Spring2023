@@ -15,8 +15,8 @@ const cars = [
     trimModel: "GTR",
   },
 ];
-const getAll = (arr) => arr;
-const getItem = (arr, index) => arr[index];
+const getAll = () => cars;
+const getItem = (attr) => cars.find((item) => item.attr === manufacturer);
 
 export { getAll };
 export { getItem };
