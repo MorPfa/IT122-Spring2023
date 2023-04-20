@@ -1,9 +1,9 @@
 <html>
     <Body>
-        <h1>cars</h1>
+        <h1>Cars I like</h1>
         <ul>
-          <% items.forEach(item => { %>
-            <li><a href="/detail?manufacturer=<%= item.manufacturer %>"><%= item.manufacturer %> - <%= item.model %> - <%= item.horsepower %></a></li>
+          <% items.forEach(car => { %>
+            <li><a href="/detail?manufacturer=<%= item.manufacturer %>"><%= car.manufacturer %> - <%= car.model %> - <%= car.horsepower %>hp</a></li>
           <% }) %>
         </ul>
       </body>

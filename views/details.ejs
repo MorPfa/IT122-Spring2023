@@ -1,10 +1,24 @@
 <html>
-    <Body>
-        <h1>Car manufacturers I like</h1>
-        <p><a href="home.ejs"></a></p>
-        <table>
-         
-            </table>
-         </h2>
-    </Body>
+  <body>
+    <h1>Car details</h1>
+    <p><a href="/">Back to home</a></p>
+    <table>
+      <tr>
+        <th>Manufacturer</th>
+        <td><%= car.manufacturer %></td>
+      </tr>
+      <tr>
+        <th>Model</th>
+        <td><%= car.model %></td>
+      </tr>
+      <tr>
+        <th>Horsepower</th>
+        <td><%= car.horsepower %>hp</td>
+      </tr>
+      <tr>
+        <th>Trim model</th>
+        <td><%= car.trimModel %></td>
+      </tr>
+    </table>
+  </body>
 </html>

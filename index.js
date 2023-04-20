@@ -1,19 +1,24 @@
 "use stict";
 import express from "express";
-import * as fs from "fs/promises";
-import * as http from "http";
-import * as data from "./data.js";
-import exp from "constants";
+// import * as data from "./data.js";
+import { Car } from "./models/Car.js";
 
 const app = express();
 app.set("port", process.env.PORT || 3000);
 app.use(express.static("public"));
 app.set("view engine", "ejs");
 
-app.get("/", (req, res) => {
-  const items = data.getAll();
-  res.render("home", { items });
-  console.log("received request");
+app.get("/", async (req, res) => {
+  try {
+    const cars = await Car.find({});
+    res.render("home", { items: cars });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server Error");
+  }
+  // const items = data.getAll();
+  // res.render("home", { items });
+  // console.log("received request");
 });
 
 app.get("/about", (req, res) => {
@@ -23,12 +28,23 @@ app.get("/about", (req, res) => {
 });
 app.get("/details", (req, res) => {
   const manufacturer = parseInt(req.query.manufacturer);
-  const item = data.getItem(manufacturer);
-  if (!item) {
-    res.sendStatus(404);
-  } else {
-    res.render("details", { item });
+  try {
+    const car = Car.findOne({ manufacturer });
+    if (!car) {
+      res.sendStatus(404);
+    } else {
+      res.render("details", { car });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server Error");
   }
+  // const item = data.getItem(manufacturer);
+  // if (!item) {
+  //   res.sendStatus(404);
+  // } else {
+  //   res.render("details", { item });
+  // }
 });
 app.use((req, res) => {
   res.type("text/plain");
