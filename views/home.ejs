@@ -3,7 +3,7 @@
         <h1>Cars I like</h1>
         <ul>
           <% items.forEach(car => { %>
-            <li><a href="/detail?manufacturer=<%= item.manufacturer %>"><%= car.manufacturer %> - <%= car.model %> - <%= car.horsepower %>hp</a></li>
+            <li><a href="/detail?manufacturer=<%= car.manufacturer %>"><%= car.manufacturer %> - <%= car.model %> - <%= car.horsepower %>hp</a></li>
           <% }) %>
         </ul>
       </body>
