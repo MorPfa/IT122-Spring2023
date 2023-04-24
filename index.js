@@ -1,6 +1,6 @@
 "use stict";
 import express from "express";
-// import * as data from "./data.js";
+
 import { Car } from "./models/Car.js";
 
 const app = express();
@@ -16,9 +16,6 @@ app.get("/", async (req, res) => {
     console.error(err);
     res.status(500).send("Server Error");
   }
-  // const items = data.getAll();
-  // res.render("home", { items });
-  // console.log("received request");
 });
 
 app.get("/about", (req, res) => {
@@ -26,10 +23,12 @@ app.get("/about", (req, res) => {
   res.type("about page");
   res.sendFile("/public/about.html");
 });
-app.get("/details", (req, res) => {
-  const manufacturer = parseInt(req.query.manufacturer);
+app.get("/details/:manufacturer", async (req, res) => {
+  // const manufacturer = parseInt(req.query.manufacturer);
+  // const { manufacturer } = req.params;
   try {
-    const car = Car.findOne({ manufacturer });
+    // const car = await Car.findOne({ manufacturer });
+    const car = await Car.findOne({ manufacturer: req.params.manufacturer });
     if (!car) {
       res.sendStatus(404);
     } else {
@@ -39,12 +38,6 @@ app.get("/details", (req, res) => {
     console.error(err);
     res.status(500).send("Server Error");
   }
-  // const item = data.getItem(manufacturer);
-  // if (!item) {
-  //   res.sendStatus(404);
-  // } else {
-  //   res.render("details", { item });
-  // }
 });
 app.use((req, res) => {
   res.type("text/plain");

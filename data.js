@@ -16,7 +16,7 @@ const cars = [
   },
 ];
 const getAll = () => cars;
-const getItem = (attr) => cars.find((item) => item.attr === manufacturer);
+const getItem = (attr) => cars.find((item) => item.manufacturer === attr);
 
 export { getAll };
 export { getItem };
