@@ -1,6 +1,6 @@
 "use stict";
 import express from "express";
-
+import cors from "cors";
 import { Car } from "./models/Car.js";
 
 const app = express();
