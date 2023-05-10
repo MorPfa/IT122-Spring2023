@@ -1,0 +1,11 @@
+<html>
+    <Body>
+        <h1>Cars I like</h1>
+        <ul>
+          <% items.forEach(car => { %>
+            <li><a href="/details/<%= car.manufacturer %>"><%= car.manufacturer %> - <%= car.model %></a></li>
+            <% }) %>
+        </ul>
+        
+      </body>
+</html>
