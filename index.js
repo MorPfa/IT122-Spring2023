@@ -5,7 +5,6 @@ import cors from "cors";
 import { Car } from "./models/Car.js";
 import React from "react";
 import ReactDOM from "react-dom";
-// import Home from "home.jsx";
 
 const app = express();
 
@@ -16,8 +15,6 @@ app.set("port", process.env.PORT || 3000);
 app.use(express.static("public"));
 app.set("view engine", "ejs");
 
-// ReactDOM.render(<Home />, document.getElementById("app"));
-
 app.get("/", async (req, res) => {
   try {
     const cars = await Car.find({});
@@ -27,15 +24,6 @@ app.get("/", async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
-// app.get("/", async (req, res) => {
-//   try {
-//     const cars = await Car.find({});
-//     res.render("home", { items: cars });
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).send("Server Error");
-//   }
-// });
 
 app.get("/api/cars", async (req, res) => {
   try {
@@ -90,18 +78,22 @@ app.get("/about", (req, res) => {
   res.type("about page");
   res.sendFile("/public/about.html");
 });
-app.get("/details/:manufacturer", async (req, res) => {
-  try {
-    const car = await Car.findOne({ manufacturer: req.params.manufacturer });
-    if (!car) {
-      res.sendStatus(404);
-    } else {
-      res.render("details", { car });
-    }
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Server Error");
-  }
+// app.get("/details/:manufacturer", async (req, res) => {
+//   try {
+//     const car = await Car.findOne({ manufacturer: req.params.manufacturer });
+//     if (!car) {
+//       res.sendStatus(404);
+//     } else {
+//       res.render("details", { car });
+//     }
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).send("Server Error");
+//   }
+// });
+app.get("/details/:id", (req, res) => {
+  const car = Car.find((c) => c.id === parseInt(req.params.id));
+  res.render("details", { car: car });
 });
 app.use((req, res) => {
   res.type("text/plain");
