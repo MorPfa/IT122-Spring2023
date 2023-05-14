@@ -78,22 +78,18 @@ app.get("/about", (req, res) => {
   res.type("about page");
   res.sendFile("/public/about.html");
 });
-// app.get("/details/:manufacturer", async (req, res) => {
-//   try {
-//     const car = await Car.findOne({ manufacturer: req.params.manufacturer });
-//     if (!car) {
-//       res.sendStatus(404);
-//     } else {
-//       res.render("details", { car });
-//     }
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).send("Server Error");
-//   }
-// });
-app.get("/details/:id", (req, res) => {
-  const car = Car.find((c) => c.id === parseInt(req.params.id));
-  res.render("details", { car: car });
+app.get("/details/:manufacturer", async (req, res) => {
+  try {
+    const car = await Car.findOne({ manufacturer: req.params.manufacturer });
+    if (!car) {
+      res.sendStatus(404);
+    } else {
+      res.render("details", { car });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server Error");
+  }
 });
 app.use((req, res) => {
   res.type("text/plain");

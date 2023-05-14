@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Form, Button } from "react-bootstrap";
-
-function showDetails(carId) {
-  const car = cars.find((c) => c.id === carId);
-  const detailsContainer = document.querySelector("#details-container");
-  detailsContainer.innerHTML = `
-      <h2>${car.make} ${car.model}</h2>
-      <p>Year: ${car.year}</p>
-      <p>Color: ${car.color}</p>
-      <p>Price: ${car.price}</p>
-    `;
-}
-
+// function showDetails(carId) {
+//   const car = cars.find((c) => c.id === carId);
+//   const detailsContainer = document.querySelector("#details-container");
+//   detailsContainer.innerHTML = `
+//     <h2>${car.make} ${car.model}</h2>
+//     <p>Year: ${car.year}</p>
+//     <p>Color: ${car.color}</p>
+//     <p>Price: ${car.price}</p>
+//   `;
+// }
 function Detail(props) {
   const [car, setCar] = useState(null);
   const [manufacturer, setManufacturer] = useState("");
@@ -116,5 +114,4 @@ function Detail(props) {
     </Form>
   );
 }
-
 export default Detail;
