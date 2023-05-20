@@ -57,10 +57,10 @@ app.post("/api/cars", async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
-app.delete("/api/cars/:manufacturer", async (req, res) => {
+app.delete("/api/cars/:id", async (req, res) => {
   try {
     const result = await Car.deleteOne({
-      manufacturer: req.params.manufacturer,
+      _id: req.params.id,
     });
     if (result.deletedCount === 0) {
       res.sendStatus(404);

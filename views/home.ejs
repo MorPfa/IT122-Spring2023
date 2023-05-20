@@ -19,8 +19,21 @@
     // define other components
 
     const CarList = (props) => {
-      const listItems = props.cars.map((item) =>  <li  key={item._id}><a href={"/details/" + item.manufacturer}>{item.manufacturer}</a></li>);
-      return <div>List of cars I like: <ul>{listItems}</ul> </div>
+      return (
+        <div>
+          <h3>List of cars:</h3>
+          <ul>
+            {props.cars.map((item) => (
+              <li key={item._id}>
+                <span>{item.manufacturer}</span>
+                <button type="button" onClick={() => props.handleEdit(item)}>
+                  Edit
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      );
     }
 
     class CarForm extends React.Component {
@@ -28,10 +41,30 @@
         super(props);
         this.state = {
           manufacturer: '',
-          attribute1: '',
-          attribute2: '',
-          selectedAttributes: null,
+          horsepower: '',
+          model: '',
+          trimModel: '',
+          cars: [],
+          selectedCar: null,
         };
+      }
+
+      componentDidMount() {
+        this.loadCars();
+      }
+
+      loadCars = async () => {
+        try {
+          const response = await fetch('/api/cars');
+          if (response.ok) {
+            const data = await response.json();
+            this.setState({ cars: data });
+          } else {
+            console.error('Failed to load cars.');
+          }
+        } catch (err) {
+          console.error(err);
+        }
       }
 
       handleInputChange = (event) => {
@@ -39,41 +72,94 @@
         this.setState({ [name]: value });
       }
 
-      handleSubmit = (event) => {
+      handleEdit = (item) => {
+        this.setState({
+          manufacturer: item.manufacturer,
+          horsepower: item.horsepower ? item.horsepower.toString() : '',
+          model: item.model,
+          trimModel: item.trimModel,
+          selectedCar: item,
+        });
+      }
+
+      handleSubmit = async (event) => {
         event.preventDefault();
-        const { manufacturer, attribute1, attribute2 } = this.state;
+        const { manufacturer, horsepower, model, trimModel, selectedCar } = this.state;
 
-        // Filter the list of cars based on the entered manufacturer
-        const filteredCars = items.filter((car) => car.manufacturer === manufacturer);
+        try {
+          let response;
+          if (selectedCar) {
+            // Update existing car
+            response = await fetch(`/api/cars/${selectedCar._id}`, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                manufacturer,
+                horsepower: parseInt(horsepower),
+                model,
+                trimModel,
+              }),
+            });
+          } else {
+            // Create new car
+            response = await fetch('/api/cars', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                manufacturer,
+                horsepower: parseInt(horsepower),
+                model,
+                trimModel,
+              }),
+            });
+          }
 
-        // Retrieve the attribute values for the filtered car
-        const selectedCar = filteredCars[0]; // Assuming there is only one matching car
-
-        if (selectedCar) {
-          // Set the selected attribute values in the state
-          const selectedAttributes = {
-            manufacturer: selectedCar.manufacturer,
-            attribute1: `${attribute1}: ${selectedCar[attribute1]}`,
-            attribute2: `${attribute2}: ${selectedCar[attribute2]}`,
-          };
-
-          this.setState({ selectedAttributes });
-        } else {
-          this.setState({ selectedAttributes: null }); // Reset selectedAttributes if no matching car found
+          if (response.ok) {
+            this.loadCars();
+            this.handleClear();
+          } else {
+            console.error('Failed to save item.');
+          }
+        } catch (err) {
+          console.error(err);
         }
       }
+
+      handleDelete = async () => {
+  const { selectedCar } = this.state;
+  if (selectedCar) {
+    try {
+      const response = await fetch(`/api/cars/${selectedCar._id}`, {
+        method: 'DELETE',
+      });
+      if (response.ok) {
+        this.loadCars();
+        this.handleClear();
+      } else {
+        console.error('Failed to delete item.');
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+}
 
       handleClear = () => {
         this.setState({
           manufacturer: '',
-          attribute1: '',
-          attribute2: '',
-          selectedAttributes: null,
+          horsepower: '',
+          model: '',
+          trimModel: '',
+          selectedCar: null,
         });
       }
 
       render() {
-        const { manufacturer, attribute1, attribute2, selectedAttributes } = this.state;
+        const { manufacturer, horsepower, model, trimModel, cars, selectedCar } = this.state;
         return (
           <div>
             <form onSubmit={this.handleSubmit}>
@@ -88,37 +174,40 @@
               </label>
               <br />
               <label>
-                Attribute 1:
+                Horsepower:
                 <input
                   type="text"
-                  name="attribute1"
-                  value={attribute1}
+                  name="horsepower"
+                  value={horsepower}
                   onChange={this.handleInputChange}
                 />
               </label>
               <br />
               <label>
-                Attribute 2:
+                Model:
                 <input
                   type="text"
-                  name="attribute2"
-                  value={attribute2}
+                  name="model"
+                  value={model}
                   onChange={this.handleInputChange}
                 />
               </label>
               <br />
-              <button type="submit">Submit</button>
+              <label>
+                Trim Model:
+                <input
+                  type="text"
+                  name="trimModel"
+                  value={trimModel}
+                  onChange={this.handleInputChange}
+                />
+              </label>
+              <br />
+              <button type="submit">Save</button>
+              <button type="button" onClick={this.handleDelete} disabled={!selectedCar}>Delete</button>
               <button type="button" onClick={this.handleClear}>Clear</button>
             </form>
-            {/* Display selected attribute values */}
-            {selectedAttributes && (
-              <div>
-                <h3>Selected Attributes:</h3>
-                <p>Manufacturer: {selectedAttributes.manufacturer}</p>
-                <p>Attribute 1: {selectedAttributes.attribute1}</p>
-                <p>Attribute 2: {selectedAttributes.attribute2}</p>
-              </div>
-            )}
+            <CarList cars={cars} handleEdit={this.handleEdit} />
           </div>
         );
       }
@@ -129,7 +218,6 @@
         <div>
           <h2>Cars</h2>
           <CarForm />
-          <CarList cars={items} />
         </div>
       );
     }
