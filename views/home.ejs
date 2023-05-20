@@ -15,19 +15,123 @@
 <script type="text/babel">
 
     const items = <%- items %>;
-    console.log(items)
 
     // define other components
 
     const CarList = (props) => {
-      console.log(props)
       const listItems = props.cars.map((item) =>  <li  key={item._id}><a href={"/details/" + item.manufacturer}>{item.manufacturer}</a></li>);
       return <div>List of cars I like: <ul>{listItems}</ul> </div>
     }
 
+    class CarForm extends React.Component {
+      constructor(props) {
+        super(props);
+        this.state = {
+          manufacturer: '',
+          attribute1: '',
+          attribute2: '',
+          selectedAttributes: null,
+        };
+      }
+
+      handleInputChange = (event) => {
+        const { name, value } = event.target;
+        this.setState({ [name]: value });
+      }
+
+      handleSubmit = (event) => {
+        event.preventDefault();
+        const { manufacturer, attribute1, attribute2 } = this.state;
+
+        // Filter the list of cars based on the entered manufacturer
+        const filteredCars = items.filter((car) => car.manufacturer === manufacturer);
+
+        // Retrieve the attribute values for the filtered car
+        const selectedCar = filteredCars[0]; // Assuming there is only one matching car
+
+        if (selectedCar) {
+          // Set the selected attribute values in the state
+          const selectedAttributes = {
+            manufacturer: selectedCar.manufacturer,
+            attribute1: `${attribute1}: ${selectedCar[attribute1]}`,
+            attribute2: `${attribute2}: ${selectedCar[attribute2]}`,
+          };
+
+          this.setState({ selectedAttributes });
+        } else {
+          this.setState({ selectedAttributes: null }); // Reset selectedAttributes if no matching car found
+        }
+      }
+
+      handleClear = () => {
+        this.setState({
+          manufacturer: '',
+          attribute1: '',
+          attribute2: '',
+          selectedAttributes: null,
+        });
+      }
+
+      render() {
+        const { manufacturer, attribute1, attribute2, selectedAttributes } = this.state;
+        return (
+          <div>
+            <form onSubmit={this.handleSubmit}>
+              <label>
+                Manufacturer:
+                <input
+                  type="text"
+                  name="manufacturer"
+                  value={manufacturer}
+                  onChange={this.handleInputChange}
+                />
+              </label>
+              <br />
+              <label>
+                Attribute 1:
+                <input
+                  type="text"
+                  name="attribute1"
+                  value={attribute1}
+                  onChange={this.handleInputChange}
+                />
+              </label>
+              <br />
+              <label>
+                Attribute 2:
+                <input
+                  type="text"
+                  name="attribute2"
+                  value={attribute2}
+                  onChange={this.handleInputChange}
+                />
+              </label>
+              <br />
+              <button type="submit">Submit</button>
+              <button type="button" onClick={this.handleClear}>Clear</button>
+            </form>
+            {/* Display selected attribute values */}
+            {selectedAttributes && (
+              <div>
+                <h3>Selected Attributes:</h3>
+                <p>Manufacturer: {selectedAttributes.manufacturer}</p>
+                <p>Attribute 1: {selectedAttributes.attribute1}</p>
+                <p>Attribute 2: {selectedAttributes.attribute2}</p>
+              </div>
+            )}
+          </div>
+        );
+      }
+    }
 
     const App = () => {
-      return <div><h2>Cars</h2><CarList cars = {items}/></div>;
+      return (
+        <div>
+          <h2>Cars</h2>
+          <CarForm />
+          <CarList cars={items} />
+        </div>
+      );
     }
 
     ReactDOM.render(<App />, document.getElementById('root'));
