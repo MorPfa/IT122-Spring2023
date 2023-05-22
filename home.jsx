@@ -17,7 +17,7 @@ function Home() {
         <ul>
           {items.map(item => (
             <li key={item.id}>
-              <a href={`/details/${item.id}`}>{item.name}</a>
+              <a href={` /details/${item.id}`}>{item.name}</a>
             </li>
           ))}
         </ul>
